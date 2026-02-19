@@ -1,0 +1,25 @@
+{
+  "name": "pi-smart-sessions",
+  "version": "1.0.0",
+  "description": "Auto-names Pi sessions with AI-generated summaries — no more cryptic skill tags in your session list",
+  "keywords": ["pi-package", "pi-extension", "sessions", "skills"],
+  "license": "MIT",
+  "author": "HazAT",
+  "homepage": "https://github.com/HazAT/pi-smart-sessions#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HazAT/pi-smart-sessions"
+  },
+  "files": [
+    "extensions",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-ai": "*"
+  },
+  "pi": {
+    "extensions": ["./extensions"]
+  }
+}
