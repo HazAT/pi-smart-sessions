@@ -6,7 +6,6 @@ const skillPattern = /^\/skill:(\S+)\s*([\s\S]*)/;
 const SUMMARY_PROMPT =
   "Summarize the user's request in 5-10 words max. Output ONLY the summary, nothing else. No quotes, no punctuation at the end.";
 
-const CODEX_MODEL_ID = "gpt-5.1-codex-mini";
 const HAIKU_MODEL_ID = "claude-haiku-4-5";
 
 async function pickCheapModel(ctx: {
@@ -16,11 +15,6 @@ async function pickCheapModel(ctx: {
     getApiKey: (m: Model<Api>) => Promise<string | undefined>;
   };
 }): Promise<{ model: Model<Api>; apiKey: string } | null> {
-  const codex = ctx.modelRegistry.find("openai-codex", CODEX_MODEL_ID);
-  if (codex) {
-    const key = await ctx.modelRegistry.getApiKey(codex);
-    if (key) return { model: codex, apiKey: key };
-  }
   const haiku = ctx.modelRegistry.find("anthropic", HAIKU_MODEL_ID);
   if (haiku) {
     const key = await ctx.modelRegistry.getApiKey(haiku);
