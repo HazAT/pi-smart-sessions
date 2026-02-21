@@ -1,6 +1,6 @@
 {
   "name": "pi-smart-sessions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Auto-names Pi sessions with AI-generated summaries — no more cryptic skill tags in your session list",
   "keywords": ["pi-package", "pi-extension", "sessions", "skills"],
   "license": "MIT",

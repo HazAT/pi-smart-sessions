@@ -1,5 +1,7 @@
 # pi-smart-sessions
 
+[![npm version](https://img.shields.io/npm/v/pi-smart-sessions)](https://www.npmjs.com/package/pi-smart-sessions)
+
 A [Pi](https://github.com/badlogic/pi) extension that automatically names your sessions with AI-generated summaries. No more scrolling through a wall of skill tags in your session list.
 
 ## Before
