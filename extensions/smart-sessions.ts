@@ -12,17 +12,17 @@ async function pickCheapModel(ctx: {
   model: Model<Api> | null;
   modelRegistry: {
     find: (p: string, id: string) => Model<Api> | undefined;
-    getApiKey: (m: Model<Api>) => Promise<string | undefined>;
+    getApiKeyAndHeaders: (m: Model<Api>) => Promise<{ ok: true; apiKey?: string; headers?: Record<string, string> } | { ok: false; error: string }>;
   };
-}): Promise<{ model: Model<Api>; apiKey: string } | null> {
+}): Promise<{ model: Model<Api>; apiKey?: string; headers?: Record<string, string> } | null> {
   const haiku = ctx.modelRegistry.find("anthropic", HAIKU_MODEL_ID);
   if (haiku) {
-    const key = await ctx.modelRegistry.getApiKey(haiku);
-    if (key) return { model: haiku, apiKey: key };
+    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(haiku);
+    if (auth.ok) return { model: haiku, apiKey: auth.apiKey, headers: auth.headers };
   }
   if (ctx.model) {
-    const key = await ctx.modelRegistry.getApiKey(ctx.model);
-    if (key) return { model: ctx.model, apiKey: key };
+    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(ctx.model);
+    if (auth.ok) return { model: ctx.model, apiKey: auth.apiKey, headers: auth.headers };
   }
   return null;
 }
@@ -63,7 +63,7 @@ export default function (pi: ExtensionAPI) {
           systemPrompt: SUMMARY_PROMPT,
           messages: [{ role: "user", content: [{ type: "text", text: userPrompt }], timestamp: Date.now() }],
         },
-        { apiKey: cheap.apiKey },
+        { apiKey: cheap.apiKey, headers: cheap.headers },
       );
 
       const summary = response.content

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2
+
+- **Fix breaking API change** — replaced removed `modelRegistry.getApiKey()` with `getApiKeyAndHeaders()`, also forwards request headers to `complete()` for OAuth/custom provider support
+
 ## 1.0.1
 
 - **Prefer Haiku over Codex** for session name summarization — removed Codex mini as the primary model, now defaults to Claude Haiku 3.5 for faster, more reliable summaries
