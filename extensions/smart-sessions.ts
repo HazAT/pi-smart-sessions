@@ -1,5 +1,5 @@
-import { complete, type Model, type Api } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { complete, type Model, type Api } from "@earendil-works/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const skillPattern = /^\/skill:(\S+)\s*([\s\S]*)/;
 
@@ -14,15 +14,21 @@ async function pickCheapModel(ctx: {
     find: (p: string, id: string) => Model<Api> | undefined;
     getApiKeyAndHeaders: (m: Model<Api>) => Promise<{ ok: true; apiKey?: string; headers?: Record<string, string> } | { ok: false; error: string }>;
   };
-}): Promise<{ model: Model<Api>; apiKey?: string; headers?: Record<string, string> } | null> {
+}): Promise<{ model: Model<Api>; apiKey: string; headers?: Record<string, string> } | null> {
+  const resolveAuth = async (model: Model<Api>) => {
+    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
+    if (!auth.ok || !auth.apiKey) return null;
+    return { model, apiKey: auth.apiKey, headers: auth.headers };
+  };
+
   const haiku = ctx.modelRegistry.find("anthropic", HAIKU_MODEL_ID);
   if (haiku) {
-    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(haiku);
-    if (auth.ok) return { model: haiku, apiKey: auth.apiKey, headers: auth.headers };
+    const auth = await resolveAuth(haiku);
+    if (auth) return auth;
   }
   if (ctx.model) {
-    const auth = await ctx.modelRegistry.getApiKeyAndHeaders(ctx.model);
-    if (auth.ok) return { model: ctx.model, apiKey: auth.apiKey, headers: auth.headers };
+    const auth = await resolveAuth(ctx.model);
+    if (auth) return auth;
   }
   return null;
 }
@@ -53,30 +59,32 @@ export default function (pi: ExtensionAPI) {
     pi.setSessionName(`[${skillName}] ${userPrompt.slice(0, 60)}`);
 
     // Summarize in the background with a cheap model
-    const cheap = await pickCheapModel(ctx);
-    if (!cheap) return;
+    void (async () => {
+      try {
+        const cheap = await pickCheapModel(ctx);
+        if (!cheap) return;
 
-    try {
-      const response = await complete(
-        cheap.model,
-        {
-          systemPrompt: SUMMARY_PROMPT,
-          messages: [{ role: "user", content: [{ type: "text", text: userPrompt }], timestamp: Date.now() }],
-        },
-        { apiKey: cheap.apiKey, headers: cheap.headers },
-      );
+        const response = await complete(
+          cheap.model,
+          {
+            systemPrompt: SUMMARY_PROMPT,
+            messages: [{ role: "user", content: [{ type: "text", text: userPrompt }], timestamp: Date.now() }],
+          },
+          { apiKey: cheap.apiKey, headers: cheap.headers },
+        );
 
-      const summary = response.content
-        .filter((c): c is { type: "text"; text: string } => c.type === "text")
-        .map((c) => c.text)
-        .join("")
-        .trim();
+        const summary = response.content
+          .filter((c): c is { type: "text"; text: string } => c.type === "text")
+          .map((c) => c.text)
+          .join("")
+          .trim();
 
-      if (summary) {
-        pi.setSessionName(`[${skillName}] ${summary}`);
+        if (summary) {
+          pi.setSessionName(`[${skillName}] ${summary}`);
+        }
+      } catch {
+        // Keep the truncated name, no big deal
       }
-    } catch {
-      // Keep the truncated name, no big deal
-    }
+    })();
   });
 }
