@@ -1,5 +1,5 @@
-import { complete, type Model, type Api } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { complete, type Model, type Api } from "@earendil-works/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const skillPattern = /^\/skill:(\S+)\s*([\s\S]*)/;
 

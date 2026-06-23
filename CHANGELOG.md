@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- **Update package imports** — switched to `@earendil-works/pi-ai` and `@earendil-works/pi-coding-agent` to avoid npm deprecation warnings
+
 ## 1.0.2
 
 - **Fix breaking API change** — replaced removed `modelRegistry.getApiKey()` with `getApiKeyAndHeaders()`, also forwards request headers to `complete()` for OAuth/custom provider support
