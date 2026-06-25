@@ -17,7 +17,7 @@ assets/                        — Screenshots for README (before.png, after.png
 2. Matches user input against `/skill:<name> <prompt>` pattern
 3. Immediately sets a truncated session name as fallback
 4. Picks the cheapest available model (Haiku → current model) via `modelRegistry`
-5. Calls `complete()` from `@mariozechner/pi-ai` to summarize the prompt in 5–10 words
+5. Calls `complete()` from `@earendil-works/pi-ai` to summarize the prompt in 5–10 words
 6. Updates the session name to `[skillName] summary`
 
 Key design decisions:
@@ -27,8 +27,8 @@ Key design decisions:
 
 ## Dependencies
 
-- `@mariozechner/pi-coding-agent` — Pi extension API (`ExtensionAPI`, events)
-- `@mariozechner/pi-ai` — Model registry, `complete()` function
+- `@earendil-works/pi-coding-agent` — Pi extension API (`ExtensionAPI`, events)
+- `@earendil-works/pi-ai` — Model registry, `complete()` function
 
 Both are peer dependencies (provided by the Pi runtime).
 
